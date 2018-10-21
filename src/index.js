@@ -1,12 +1,30 @@
-import _ from 'lodash';
-import './style.scss';
+// import _ from 'lodash';
+import './style.css';
+import printMe from './print';
 
 function component() {
-  let element = document.createElement('div');
+  const element = document.createElement('div');
+  const btn = document.createElement('button');
 
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-  element.classList.add('hello');
+  // element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+  // element.classList.add('hello');
+
+  btn.innerHTML = 'Click me ';
+
+  btn.onclick = printMe;
+  element.appendChild(btn);
+
   return element;
 }
 
-document.body.appendChild(component());
+let element = component(); // Store the element to re-render on print.js changes
+document.body.appendChild(element);
+
+if (module.hot) {
+  module.hot.accept('./print.js', function() {
+    console.log('Accepting the updated printMe module!');
+    document.body.removeChild(element);
+    element = component(); // Re-render the "component" to update the click handler
+    document.body.appendChild(element);
+  })
+}
